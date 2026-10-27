@@ -9,7 +9,7 @@ export class OfficeCanvas {
     this.onLocationClick = onLocationClick;
 
     this.bgImage = new Image();
-    this.bgImage.src = 'assets/virtual_office_bg.jpg';
+    this.bgImage.src = '/assets/virtual_office_bg.jpg';
     this.bgLoaded = false;
     this.bgImage.onload = () => {
       this.bgLoaded = true;
@@ -61,10 +61,10 @@ export class OfficeCanvas {
         const agent = this.agents[i];
         const screenX = agent.x * this.width;
         const screenY = agent.y * this.height;
-        const radius = 28;
         const dist = Math.hypot(mouseX - screenX, mouseY - screenY);
 
-        if (dist <= radius) {
+        // Expanded hitbox covering avatar, speech bubble, and name tag
+        if (dist <= 36 || (Math.abs(mouseX - screenX) < 65 && mouseY >= screenY - 45 && mouseY <= screenY + 30)) {
           found = agent;
           break;
         }

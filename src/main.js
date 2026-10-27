@@ -491,7 +491,7 @@ dom.btnSendDirectChat.addEventListener('click', () => {
 });
 
 // --- Modal 2: Hiring Hall ---
-let selectedAvatarSrc = 'assets/agent_nova.jpg';
+let selectedAvatarSrc = '/assets/agent_nova.jpg';
 
 dom.avatarPickerGrid.querySelectorAll('.avatar-select-option').forEach(avatarEl => {
   avatarEl.addEventListener('click', () => {
