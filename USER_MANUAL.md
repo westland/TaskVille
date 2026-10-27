@@ -142,17 +142,23 @@ TaskVille connects directly to real-world cloud applications. Access the catalog
 
 ---
 
-## 8. Executive Deliverables Vault
+## 8. Executive Deliverables Vault (The Creation Repository)
 
-Whenever a multi-agent mission completes, the **Deliverables Vault** automatically opens (also accessible via `📦 Deliverables`).
+The **Deliverables Vault** is the official repository for all work produced by your autonomous agents—both multi-agent swarm operations and direct custom directives (such as poems, copywriting, research briefs, or code).
 
-The vault organizes mission assets into clean, dedicated tabs:
-1. **📋 Executive Summary:** KPIs, projected CAC/LTV, and milestones.
-2. **🔍 Market & Intel Brief:** Competitor audit, gap analysis, and differentiation strategy.
-3. **✍️ Copy & Sequences:** Full email sequences and viral social hooks ready to deploy.
-4. **🎨 Art & Visual Direction:** Color hex palettes, visual composition rules, and Midjourney/Flux diffusion prompts.
-5. **🚀 Distribution Plan:** Multi-channel 7-day launch calendar and posting windows.
-6. **🔌 Tech & Webhook Spec:** JSON webhook payload schemas and automation triggers.
+### Accessing the Repository:
+- **Top Navigation Bar:** Click **`📦 Deliverables`** at any time.
+- **From the Live Feed:** When an agent finishes a directive, a card appears in the Live Feed with a direct button: **`[Read Full in Deliverables Vault 📦]`**. Clicking it jumps directly to that tab.
+- **From the Agent Dossier:** Click **`📦 Open Deliverables Vault & Repository`** directly underneath the directive command input.
+
+### What is Stored in the Vault:
+1. **Direct Agent Creations (e.g., Poems, Letters, Code):** Whenever an agent is instructed to create a deliverable (e.g., *"Lyra, write a poem on quantum computing"*), the full text is immediately prepended as a dedicated tab: `📜 [Agent]: [Title]`.
+2. **📋 Executive Summary:** Swarm KPIs, projected CAC/LTV, and milestones.
+3. **🔍 Market & Intel Brief:** Competitor audits, market gaps, and positioning strategy.
+4. **✍️ Copy & Sequences:** Full email sequences and viral social hooks.
+5. **🎨 Art & Visual Direction:** Color hex palettes, visual rules, and diffusion prompts.
+6. **🚀 Distribution Plan:** Multi-channel launch roadmap and posting windows.
+7. **🔌 Tech & Webhook Spec:** JSON webhook payload schemas and integration triggers.
 
 ### Vault Actions:
 - **📋 Copy Content:** Copies the active tab's formatted markdown directly to your clipboard.

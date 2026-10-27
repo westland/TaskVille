@@ -85,7 +85,8 @@ bash deploy-hetzner.sh
 
 ## 📖 Documentation
 
-For full operational instructions, user workflows, and system settings, read the [Official User Manual (USER_MANUAL.md)](USER_MANUAL.md).
+- **Official User Manual:** [USER_MANUAL.md](USER_MANUAL.md) — Comprehensive operational workflows, floor map, agent roles, autopilot schedules, and integrations.
+- **Technical Memory & Architecture Log:** [PROJECT_MEMORY.md](PROJECT_MEMORY.md) — Permanent archive of full technical stack, server configuration, and troubleshooting logs.
 
 ---
 
