@@ -8,7 +8,7 @@ services:
     container_name: taskville_office
     restart: always
     ports:
-      - "80:80"
+      - "8550:80"
     environment:
       - NODE_ENV=production
     healthcheck:
