@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  taskville:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskville_office
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

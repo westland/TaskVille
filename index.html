@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskVille | Gamified Virtual Office for Autonomous AI Agents</title>
+  <meta name="description" content="TaskVille is a gamified AI agent platform that simulates a virtual office where solopreneurs and teams deploy autonomous AI workers to execute operations on autopilot.">
+  <link rel="icon" type="image/jpeg" href="assets/taskville_logo.jpg">
+  <link rel="stylesheet" href="src/styles/main.css">
+  <link rel="stylesheet" href="src/styles/components.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Top Navigation HUD -->
+    <header class="top-nav" role="banner">
+      <div class="brand-wrapper" id="brandHomeBtn">
+        <img src="assets/taskville_logo.jpg" alt="TaskVille Virtual AI Office Logo" class="brand-logo-img">
+        <div class="brand-text">
+          <h1>TASKVILLE <span class="brand-badge">Autonomous HQ</span></h1>
+        </div>
+      </div>
+
+      <div class="office-stats-bar">
+        <div class="stat-chip" id="agentCountChip">
+          <span class="status-dot-pulse"></span>
+          <span id="statActiveAgents">6 AI Workers Online</span>
+        </div>
+        <div class="stat-chip">
+          <span>⚡</span>
+          <span>Autopilot: Armed</span>
+        </div>
+        <div class="stat-chip">
+          <span>🔌</span>
+          <span>250+ Integrations</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn btn-primary" id="btnNewMission" aria-label="Dispatch New Multi-Agent Mission">
+          <span>⚡</span> Dispatch Swarm
+        </button>
+        <button class="btn btn-purple" id="btnOpenHire" aria-label="Hire New AI Worker">
+          <span>🤖</span> Hire Agent
+        </button>
+        <button class="btn btn-glass" id="btnOpenAutopilot" aria-label="Open Autopilot Scheduling Hub">
+          <span>⏱️</span> Autopilot
+        </button>
+        <button class="btn btn-glass" id="btnOpenIntegrations" aria-label="Open Integrations Hub">
+          <span>🔌</span> Integrations
+        </button>
+        <button class="btn btn-glass" id="btnOpenDeliverables" aria-label="Open Deliverables Vault">
+          <span>📦</span> Deliverables
+        </button>
+        <button class="btn btn-glass btn-icon-only" id="btnToggleSound" title="Toggle Sound FX" aria-label="Toggle Sound FX">
+          <span id="soundIcon">🔊</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="workspace-container" role="main">
+      <!-- 2.5D Isometric Virtual Office Viewport -->
+      <section class="office-viewport-container" aria-label="Virtual Office Interactive Floor">
+        <!-- Floating HUD Overlays -->
+        <div class="office-floating-hud">
+          <div class="hud-pill hud-pill-active" id="hudLiveStatus">
+            <span class="status-dot-pulse"></span>
+            <span>Virtual Floor: Active</span>
+          </div>
+          <button class="btn btn-glass btn-icon-only hud-pill" id="btnCoffeeBreak" title="Send Team to Coffee Lounge" aria-label="Coffee Break">
+            <span>☕ Break</span>
+          </button>
+          <button class="btn btn-glass btn-icon-only hud-pill" id="btnGatherWarRoom" title="Gather Agents in War Room" aria-label="Gather War Room">
+            <span>🎯 Sync</span>
+          </button>
+        </div>
+
+        <div class="hud-theme-selector" id="themeSelector">
+          <button class="theme-btn active" data-theme="cyber-neon">Cyber</button>
+          <button class="theme-btn" data-theme="lo-fi">Lo-Fi</button>
+          <button class="theme-btn" data-theme="tokyo-tech">Tokyo</button>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="canvas-wrapper">
+          <canvas id="officeCanvas"></canvas>
+        </div>
+
+        <!-- Bottom Mission Command Bar -->
+        <footer class="bottom-command-bar" role="contentinfo">
+          <!-- Quick Mission Starter Chips -->
+          <div class="mission-quick-templates" id="quickTemplatesContainer">
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); margin-right: 4px;">PRESETS:</span>
+            <button class="quick-chip" data-template-id="campaign-launch">
+              <span>🚀</span> Q4 Growth Campaign & Social Blitz
+            </button>
+            <button class="quick-chip" data-template-id="competitor-audit">
+              <span>🔍</span> Competitor & Pricing Teardown
+            </button>
+            <button class="quick-chip" data-template-id="inbound-qualification">
+              <span>🎯</span> Inbound Lead Triage & Outreach
+            </button>
+          </div>
+
+          <!-- Mission Input Field -->
+          <div class="mission-input-row">
+            <div class="mission-input-wrapper">
+              <span class="mission-input-icon">⚡</span>
+              <input type="text" id="missionInput" class="mission-input" placeholder="Assign an autonomous mission to your virtual AI office (e.g., 'Launch product hunt campaign with visuals and outreach')..." autocomplete="off">
+            </div>
+            <button class="btn btn-primary" id="btnDispatchMission">
+              <span>Dispatch Swarm ⚡</span>
+            </button>
+          </div>
+
+          <!-- Live Mission Progress Banner -->
+          <div class="mission-progress-banner" id="missionProgressBanner">
+            <div class="progress-info">
+              <div class="progress-spinner"></div>
+              <div>
+                <div class="progress-text-title" id="progressTitle">Executing Multi-Agent Swarm...</div>
+                <div class="progress-text-step" id="progressStep">Nova decomposing mission dependencies...</div>
+              </div>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-cyan);" id="progressPercent">0%</div>
+          </div>
+        </footer>
+      </section>
+
+      <!-- Right Sidebar: Live Office Feed & Agent Swarm Roster -->
+      <aside class="right-sidebar" aria-label="Office Activity Feed">
+        <div class="sidebar-tabs">
+          <button class="sidebar-tab-btn active" data-tab="feed" id="tabFeedBtn">Live Feed & Banter</button>
+          <button class="sidebar-tab-btn" data-tab="roster" id="tabRosterBtn">Swarm Roster</button>
+        </div>
+
+        <!-- Tab 1: Live Feed -->
+        <div class="sidebar-content-area" id="tabFeedContent">
+          <!-- Feed cards populated dynamically -->
+        </div>
+
+        <!-- Tab 2: Swarm Roster -->
+        <div class="sidebar-content-area" id="tabRosterContent" style="display: none;">
+          <!-- Roster cards populated dynamically -->
+        </div>
+      </aside>
+    </main>
+
+    <!-- Modal 1: Agent Dossier -->
+    <div class="modal-backdrop" id="dossierModal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span id="dossierModalIcon">🤖</span>
+            <span>Agent Personnel Dossier</span>
+          </div>
+          <button class="modal-close-btn" data-close-modal="dossierModal">&times;</button>
+        </div>
+        <div class="modal-body" id="dossierModalBody">
+          <!-- Populated dynamically -->
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-glass" data-close-modal="dossierModal">Close</button>
+          <button class="btn btn-primary" id="btnSendDirectChat">Send Directive</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 2: Hiring Hall -->
+    <div class="modal-backdrop" id="hiringModal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span>🤝</span>
+            <span>Hire New Autonomous AI Worker</span>
+          </div>
+          <button class="modal-close-btn" data-close-modal="hiringModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="hiringForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="hireName">Agent Name</label>
+                <input type="text" id="hireName" class="form-input" placeholder="e.g., Echo Solis" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="hireTitle">Job Title</label>
+                <input type="text" id="hireTitle" class="form-input" placeholder="e.g., Inbound Sales Closer" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="hireDept">Department / Zone</label>
+                <select id="hireDept" class="form-select">
+                  <option value="Growth & Sales">Growth & Sales</option>
+                  <option value="Research & Intel">Research & Intel</option>
+                  <option value="Creative & Content">Creative & Content</option>
+                  <option value="Operations & Integrations">Operations & Integrations</option>
+                  <option value="Executive HQ">Executive HQ</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="hireTrait">Specialty Trait</label>
+                <select id="hireTrait" class="form-select">
+                  <option value="speed">⚡ Speed Demon (+25% Task Speed)</option>
+                  <option value="precision">🎯 Perfectionist (99.9% Accuracy)</option>
+                  <option value="creativity">🎨 Creative Maverick (High Novelty)</option>
+                  <option value="connector">🔌 Integration Master (Direct APIs)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Select Avatar Portrait</label>
+              <div class="avatar-selector-grid" id="avatarPickerGrid">
+                <img src="assets/agent_nova.jpg" class="avatar-select-option selected" data-src="assets/agent_nova.jpg" alt="Avatar Option 1">
+                <img src="assets/agent_atlas.jpg" class="avatar-select-option" data-src="assets/agent_atlas.jpg" alt="Avatar Option 2">
+                <img src="assets/agent_lyra.jpg" class="avatar-select-option" data-src="assets/agent_lyra.jpg" alt="Avatar Option 3">
+                <img src="assets/agent_pixel.jpg" class="avatar-select-option" data-src="assets/agent_pixel.jpg" alt="Avatar Option 4">
+                <img src="assets/agent_vance.jpg" class="avatar-select-option" data-src="assets/agent_vance.jpg" alt="Avatar Option 5">
+                <img src="assets/agent_cipher.jpg" class="avatar-select-option" data-src="assets/agent_cipher.jpg" alt="Avatar Option 6">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="hirePrompt">System Instructions / Behavioral Persona</label>
+              <textarea id="hirePrompt" class="form-textarea" rows="3" placeholder="Define how this agent reasons, delegates, and executes autonomous work..."></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-glass" data-close-modal="hiringModal">Cancel</button>
+          <button class="btn btn-primary" id="btnSubmitHire">Deploy to Office 🚀</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 3: Autopilot & Scheduling Hub -->
+    <div class="modal-backdrop" id="autopilotModal">
+      <div class="modal-dialog modal-dialog-large">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span>⏱️</span>
+            <span>Autopilot & Autonomous Recurring Schedules</span>
+          </div>
+          <button class="modal-close-btn" data-close-modal="autopilotModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Configure routine operations to execute on autopilot without human prompting. Agents collaborate, produce reports, and dispatch to your SaaS stack automatically.
+          </p>
+
+          <div id="autopilotJobsList">
+            <!-- Populated dynamically -->
+          </div>
+
+          <div style="margin-top: 24px;">
+            <h4 style="font-family: var(--font-heading); font-size: 0.95rem; margin-bottom: 10px; color: var(--accent-cyan);">
+              Recent Autonomous Execution Logs
+            </h4>
+            <div id="autopilotLogsList" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-glass" data-close-modal="autopilotModal">Close</button>
+          <button class="btn btn-primary" id="btnRunAllAutopilot">Trigger All Active Routines Now ⚡</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 4: 250+ Integrations Hub -->
+    <div class="modal-backdrop" id="integrationsModal">
+      <div class="modal-dialog modal-dialog-large">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span>🔌</span>
+            <span>250+ SaaS & Tool Integrations Hub</span>
+          </div>
+          <button class="modal-close-btn" data-close-modal="integrationsModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="integrations-filter-bar" id="integrationsFilterBar">
+            <button class="filter-btn active" data-category="all">All (250+)</button>
+            <button class="filter-btn" data-category="Productivity & Comms">Productivity & Comms</button>
+            <button class="filter-btn" data-category="CRM & Marketing">CRM & Marketing</button>
+            <button class="filter-btn" data-category="Social & Growth">Social & Growth</button>
+            <button class="filter-btn" data-category="Commerce & Dev">Commerce & Dev</button>
+          </div>
+
+          <div class="integrations-grid" id="integrationsGrid">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-glass" data-close-modal="integrationsModal">Close</button>
+          <button class="btn btn-primary" id="btnTestAllWebhooks">Test Webhook Handshakes ⚡</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 5: Deliverables & Executive Pack -->
+    <div class="modal-backdrop" id="deliverablesModal">
+      <div class="modal-dialog modal-dialog-large">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span>📦</span>
+            <span>Executive Deliverables & Swarm Artifacts</span>
+          </div>
+          <button class="modal-close-btn" data-close-modal="deliverablesModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="deliverables-header">
+            <div>
+              <h3 style="font-family: var(--font-heading); font-size: 1.1rem; color: #ffffff;" id="deliverableTitle">
+                Q4 Autonomous AI Suite Launch Pack
+              </h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;" id="deliverableMeta">
+                Generated collaboratively by Nova, Atlas, Lyra, Pixel, Vance & Cipher
+              </p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-glass" id="btnCopyDeliverable">📋 Copy Content</button>
+              <button class="btn btn-primary" id="btnDownloadDeliverable">💾 Download Markdown</button>
+            </div>
+          </div>
+
+          <div class="deliverables-tabs" id="deliverablesTabs">
+            <!-- Populated dynamically -->
+          </div>
+
+          <div class="deliverable-content-box" id="deliverableContentBox">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-glass" data-close-modal="deliverablesModal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
