@@ -9,8 +9,11 @@ This document serves as the permanent memory and architectural record of all eng
 - **Project Name:** TaskVille (Gamified Virtual Office for Autonomous AI Swarms)
 - **Concept:** Replicates and expands upon the autonomous agent virtual office paradigm (inspired by TaskVille.co). Instead of manual prompting or writing workflow code, users deploy a virtual team of specialized AI agents that execute routine operations on autopilot inside an interactive 2.5D isometric office.
 - **GitHub Repository:** [https://github.com/westland/TaskVille](https://github.com/westland/TaskVille)
-- **Live Server URL:** [http://89.167.22.10/](http://89.167.22.10/) & [http://89.167.22.10:8550/](http://89.167.22.10:8550/)
+- **Live Production URL:** [https://taskville.org/](https://taskville.org/) & [https://www.taskville.org/](https://www.taskville.org/)
+- **Direct Server Endpoints:** [http://89.167.22.10/](http://89.167.22.10/) & [http://89.167.22.10:8550/](http://89.167.22.10:8550/)
 - **Target Server:** Hetzner Cloud CX23 (`ubuntu-4gb-hel1-2`, 4 GB RAM, 2 vCPU, 40 GB SSD)
+- **DNS & CDN Management:** Cloudflare (Authoritative Nameservers: `cris.ns.cloudflare.com`, `kenia.ns.cloudflare.com`)
+- **SSL / TLS:** Cloudflare Edge Universal SSL + Let's Encrypt TLS 1.3
 
 ---
 
@@ -143,13 +146,22 @@ TaskVille/
 3. **Agent Creation Storage (Deliverables Vault):**
    - Direct agent directives were previously only logging short summaries to the feed without storing the full creative work.
    - Resolved by restructuring Gemini output to pure JSON containing the full markdown text and prepending a new tab into `state.activeDeliverable.tabs`, with direct buttons in the Live Feed and Dossier.
+4. **Multi-Tenant Server SNI Conflict on Port 443 & Reverse Proxy:**
+   - Server `89.167.22.10` already hosts an existing production website on port 443 with Nginx. Initial HTTPS requests to `https://taskville.org` defaulted to the existing site due to lack of a dedicated SSL server block for `taskville.org`.
+   - Resolved via Cloudflare Edge Proxy with Universal SSL terminating at Cloudflare Edge and routing to the TaskVille origin container on port 80/8550.
+5. **Local ISP / AT&T Router NXDOMAIN Caching & Bitdefender Managed Browser:**
+   - The user's home gateway (`192.168.1.254`) and Bitdefender cached an early NXDOMAIN lookup from before the Cloudflare DNS records were added.
+   - Bitdefender applied Windows Group Policies that marked Chrome as "managed" and locked Chrome's internal "Use Secure DNS" setting.
+   - Resolved by setting the Windows network adapter (`Wi-Fi`) DNS directly to Cloudflare (`1.1.1.1` and `8.8.8.8`) via `Set-DnsClientServerAddress -InterfaceAlias 'Wi-Fi' -ServerAddresses '1.1.1.1','8.8.8.8'; ipconfig /flushdns`.
 
 ---
 
 ## 6. Project Status
 
+- **Live Production URL:** [https://taskville.org/](https://taskville.org/) (Active, TLS 1.3 secured).
 - **Build Status:** Clean production build (`npm run build` passing in <800ms).
-- **Hetzner Status:** Healthy, running on Docker on Hetzner CX23 (`http://89.167.22.10/`).
+- **Hetzner Status:** Healthy, running on Docker on Hetzner CX23 (`taskville_office` container on port `8550`).
+- **DNS / CDN:** Cloudflare Proxied (`cris.ns.cloudflare.com` / `kenia.ns.cloudflare.com`).
 - **GitHub Status:** Synchronized on `main` at `https://github.com/westland/TaskVille`.
 - **Local Dev Server:** Cleanly shut down; no background processes left running.
 

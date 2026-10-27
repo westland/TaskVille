@@ -3,10 +3,12 @@
 > **Deploy an autonomous virtual team of specialized AI agents that operate on autopilot inside a high-tech 2.5D isometric office.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Live Site](https://img.shields.io/badge/Live-https%3A%2F%2Ftaskville.org-00f2fe.svg)](https://taskville.org)
 [![Powered by Gemini AI](https://img.shields.io/badge/Powered%20by-Google%20Gemini%20AI-00f2fe.svg)](https://deepmind.google/technologies/gemini/)
 [![Vite](https://img.shields.io/badge/Vite-6.0-7928ca.svg)](https://vitejs.dev/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ed.svg)](https://www.docker.com/)
 [![Deployment: Hetzner CX23](https://img.shields.io/badge/Deploy-Hetzner%20CX23-red.svg)](https://www.hetzner.com/cloud)
+[![Cloudflare SSL](https://img.shields.io/badge/SSL-Cloudflare%20Edge-orange.svg)](https://cloudflare.com)
 
 ---
 
