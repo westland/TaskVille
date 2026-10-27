@@ -91,6 +91,7 @@ Return pure JSON matching this exact structure:
   }
 
   // Handle direct directive to a specific agent
+  // Handle direct directive to a specific agent and produce complete deliverables
   async directDirective(agent, userMessage) {
     if (!this.hasKey) {
       return null;
@@ -105,7 +106,14 @@ Tools you have access to: ${agent.tools.join(', ')}.
 The human operator has given you this direct instruction:
 "${userMessage}"
 
-Respond in 2-3 concise, professional, high-impact sentences detailing the immediate autonomous action you took and the result. Stay strictly in character as an elite AI specialist.`;
+Fulfill this instruction completely and produce the real, tangible deliverable (e.g. if asked to write a poem, write the full poem; if asked for an email sequence, write the full email copy; if asked for research, write the full structured briefing; if asked for code, write the full code).
+
+Return pure JSON matching this exact structure:
+{
+  "speech": "One short confirmation sentence spoken out loud in the office (max 12 words, e.g. 'I wrote your poem! It is stored in the Deliverables Vault.')",
+  "title": "A short, crisp title for this deliverable (e.g. 'Poem: Whispers of the Silicon Dawn')",
+  "content": "The COMPLETE, FULL markdown text of the work (actual full poem with stanzas, full email sequence, full technical analysis, or full code). Do NOT summarize or say you will do it—provide the complete finished deliverable here in clean markdown."
+}`;
 
       const response = await fetch(GEMINI_ENDPOINT, {
         method: 'POST',
@@ -118,16 +126,28 @@ Respond in 2-3 concise, professional, high-impact sentences detailing the immedi
             }
           ],
           generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 250
+            temperature: 0.8,
+            maxOutputTokens: 2048,
+            responseMimeType: 'application/json'
           }
         })
       });
 
       if (!response.ok) return null;
       const data = await response.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      return text ? text.trim() : null;
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawText) return null;
+
+      try {
+        const parsed = JSON.parse(rawText);
+        return parsed;
+      } catch (parseErr) {
+        return {
+          speech: 'Task executed and stored in Deliverables Vault.',
+          title: `Directive Result`,
+          content: rawText
+        };
+      }
     } catch (err) {
       console.warn('Gemini direct directive error:', err);
       return null;

@@ -210,6 +210,14 @@ body {
   box-shadow: 0 0 16px rgba(121, 40, 202, 0.35);
 }
 
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-family: var(--font-heading);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
 .btn-icon-only {
   width: 36px;
   height: 36px;

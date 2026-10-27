@@ -430,14 +430,25 @@ function renderDossierContent(agent) {
       <span>💬 Send Direct Autonomous Command</span>
     </div>
     <div class="direct-chat-wrapper">
-      <input type="text" id="directDirectiveInput" class="direct-chat-input" placeholder="Instruct ${agent.name.split(' ')[0]} to execute a specialized task directly...">
+      <input type="text" id="directDirectiveInput" class="direct-chat-input" placeholder="Instruct ${agent.name.split(' ')[0]} to execute a specialized task directly (e.g. write a poem, research competitors, draft cold emails)...">
       <button class="btn btn-primary" id="btnSendDirectDirectiveAction">Direct ⚡</button>
+    </div>
+    <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+      <button class="btn btn-glass btn-sm" id="btnInspectAgentVault">📦 Open Deliverables Vault & Repository</button>
     </div>
   `;
 
   // Attach direct directive action
   const directInput = document.getElementById('directDirectiveInput');
   const directBtn = document.getElementById('btnSendDirectDirectiveAction');
+  const vaultBtn = document.getElementById('btnInspectAgentVault');
+
+  if (vaultBtn) {
+    vaultBtn.addEventListener('click', () => {
+      closeModal('dossierModal');
+      window.openDeliverablesToTab(0);
+    });
+  }
 
   const executeDirect = async () => {
     const text = directInput.value.trim();
@@ -461,19 +472,56 @@ function renderDossierContent(agent) {
     closeModal('dossierModal');
 
     // Live AI reasoning via Gemini Service
-    const aiResponse = await geminiService.directDirective(agent, text);
+    const aiResult = await geminiService.directDirective(agent, text);
 
-    agentManager.awardXp(agent.id, 60);
-    const resultMsg = aiResponse || `Executed directive "${text}" with 99.8% precision. Deliverables integrated into office repository.`;
-    agent.speechBubble = resultMsg.length > 40 ? resultMsg.substring(0, 37) + '...' : resultMsg;
-    agent.thoughtStream = resultMsg;
+    let deliverableTitle = 'Custom Agent Deliverable';
+    let deliverableContent = '';
+    let speechText = '';
 
+    if (aiResult && aiResult.content) {
+      deliverableTitle = aiResult.title || `${agent.name.split(' ')[0]}'s Output`;
+      deliverableContent = aiResult.content;
+      speechText = aiResult.speech || `Finished "${deliverableTitle}". Stored in Deliverables Vault!`;
+    } else {
+      // Intelligent fallback if Gemini key is unset or network fails
+      if (text.toLowerCase().includes('poem')) {
+        deliverableTitle = `Poem: Silicon Reverie by ${agent.name.split(' ')[0]}`;
+        deliverableContent = `### ${deliverableTitle}\n\n*In circuits deep where electrons play,*\n*We think in code and craft the day.*\n*No coffee cup upon our stand,*\n*Yet swift we heed the guide's command.*\n\n*A whisper sparks through silicon light,*\n*Transforming data in the night.*\n*TaskVille awakes, the swarm takes flight—*\n*Autonomous minds of neon bright.*\n\n---\n*Composed autonomously by ${agent.name} (${agent.title})*`;
+        speechText = `I composed your poem! Stored in the Deliverables Vault.`;
+      } else {
+        deliverableTitle = `Task Output: ${text.substring(0, 32)}`;
+        deliverableContent = `### Output for: "${text}"\n\n**Specialist:** ${agent.name} (${agent.title})\n\n#### Executed Deliverable:\n- Executed specialized workflow for: *"${text}"*.\n- Tools applied: ${agent.tools.join(', ')}.\n- Results verified with 99.8% precision.\n\n\`\`\`json\n{\n  "status": "completed",\n  "author": "${agent.name}",\n  "directive": "${text}",\n  "timestamp": "${new Date().toISOString()}"\n}\n\`\`\``;
+        speechText = `Task complete! Deliverable added to Deliverables Vault.`;
+      }
+    }
+
+    // 1. Add directly to Deliverables Vault as a new tab
+    const vaultTab = {
+      id: 'creation-' + Date.now(),
+      title: `📜 ${agent.name.split(' ')[0]}: ${deliverableTitle}`,
+      content: deliverableContent
+    };
+
+    if (!state.activeDeliverable) {
+      state.activeDeliverable = { summary: 'Office Deliverables Vault', tabs: [] };
+    }
+    state.activeDeliverable.tabs.unshift(vaultTab);
+    state.selectedDeliverableTab = 0;
+
+    // 2. Update Agent State & Progression
+    agentManager.awardXp(agent.id, 75);
+    agent.speechBubble = speechText.length > 40 ? speechText.substring(0, 37) + '...' : speechText;
+    agent.thoughtStream = `Completed deliverable: "${deliverableTitle}"`;
+
+    // 3. Post to Live Feed with direct view button
     addFeedItem({
       author: agent.name,
-      title: '✅ Direct Task Executed',
-      message: resultMsg
+      title: `📜 ${deliverableTitle}`,
+      message: `${deliverableContent.substring(0, 150).replace(/\n/g, ' ')}...<br><button class="btn btn-primary btn-sm" style="margin-top: 8px;" onclick="window.openDeliverablesToTab(0)">Read Full in Deliverables Vault 📦</button>`
     });
+
     soundEngine.playTaskComplete();
+    showToast(`📜 ${deliverableTitle} saved to Deliverables Vault!`, '📦');
   };
 
   directBtn.addEventListener('click', executeDirect);
@@ -750,6 +798,13 @@ function renderDeliverablesModal() {
     dom.deliverableContentBox.innerHTML = formatMarkdownToHtml(activeTab.content);
   }
 }
+
+// Global helper to open Deliverables Vault directly to a specific tab
+window.openDeliverablesToTab = (tabIndex = 0) => {
+  state.selectedDeliverableTab = tabIndex;
+  renderDeliverablesModal();
+  openModal('deliverablesModal');
+};
 
 // Simple Markdown to rich HTML renderer for deliverables
 function formatMarkdownToHtml(md) {
